@@ -1,33 +1,57 @@
 import { Layout, Menu } from "antd";
 import { jwtDecode } from "jwt-decode";
 import React from "react";
+import { Link } from "react-router-dom";
 const { Sider, Content } = Layout;
 
-const Sidebar = ({ userRole }) => {
+const token = localStorage.getItem("token");
+const decoded: any = token && jwtDecode(token as string);
+console.log(decoded);
+
+const Sidebar = () => {
+  const userRole = decoded?.role;
   return (
     <Sider width={200} className="h-screen">
       <Menu
         mode="inline"
         defaultSelectedKeys={["1"]}
         style={{ height: "100%", borderRight: 0 }}
+        activeKey={
+          window.location.pathname === "/profile"
+            ? "1"
+            : window.location.pathname === "/mentors"
+            ? "2"
+            : window.location.pathname === "/reviews"
+            ? "3"
+            : window.location.pathname === "/requests"
+            ? "4"
+            : "1"
+        }
       >
-        <Menu.Item key="1">Home</Menu.Item>
-        <Menu.Item key="2">Profile</Menu.Item>
-        {/* {userRole === 'mentor' && <Menu.Item key="3">View Requests</Menu.Item>} */}
-        {/* {userRole === 'mentee' && ( */}
-        <>
-          <Menu.Item key="4">View Mentors</Menu.Item>
-          <Menu.Item key="5">Show Reviews</Menu.Item>
-        </>
-        {/* )} */}
+        <Menu.Item key="1">
+          <Link to="/profile">Profile</Link>
+        </Menu.Item>
+        {userRole === "mentee" && (
+          <>
+            <Menu.Item key="2">
+              <Link to="/mentors">Mentors</Link>
+            </Menu.Item>
+            <Menu.Item key="3">
+              <Link to="/reviews">Reviews</Link>
+            </Menu.Item>
+          </>
+        )}
+        {userRole === "mentor" && (
+          <Menu.Item key="4">
+            <Link to="/requests">View Requests</Link>
+          </Menu.Item>
+        )}
       </Menu>
     </Sider>
   );
 };
 
 const TopBar = () => {
-  const token = localStorage.getItem("token");
-  const decoded: any = jwtDecode(token as string);
   return (
     <div className="bg-gray-800 text-white p-4 flex justify-between items-center">
       <h1 className="font-bold text-white flex flex-col items-center">
@@ -37,7 +61,7 @@ const TopBar = () => {
         onClick={() => {
           localStorage.removeItem("token");
           localStorage.removeItem("refresh_token");
-          window.location.href = "/";
+          window.location.href = "/login";
         }}
       >
         Logout
@@ -51,7 +75,7 @@ const AppLayout = ({ userRole, children }) => {
     <Layout className="bg-red-500 flex ">
       <TopBar />
       <Layout>
-        <Sidebar userRole={userRole} />
+        <Sidebar />
         <Content className="p-4">{children}</Content>
       </Layout>
     </Layout>

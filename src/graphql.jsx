@@ -63,3 +63,79 @@ export const LOGIN_USER_MUTATION = gql`
   }
 `;
 
+export const REQUEST_SESSION = gql`
+  mutation RequestSession($mentorId: Int!) {
+    requestSession(mentorId: $mentorId) {
+      sessionRequest {
+        id
+        mentor {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
+
+
+export const GET_REQUESTS = gql`
+  query GetRequests {
+    requests {
+      id
+      mentor {
+        id
+        firstName
+        lastName
+      }
+      mentee {
+        id
+        firstName
+        lastName
+      }
+      status
+    }
+  }
+`;
+
+export const ACCEPT_REQUEST = gql`
+  mutation AcceptRequest($requestId: ID!) {
+    acceptRequest(requestId: $requestId) {
+      session {
+        id
+        mentor {
+          id
+          firstName
+          lastName
+        }
+        mentee {
+          id
+          firstName
+          lastName
+        }
+        status
+      }
+    }
+  }
+`;
+
+export const REJECT_REQUEST = gql`
+  mutation RejectRequest($requestId: ID!) {
+    rejectRequest(requestId: $requestId) {
+      session {
+        id
+        mentor {
+          id
+          firstName
+          lastName
+        }
+        mentee {
+          id
+          firstName
+          lastName
+        }
+        status
+      }
+    }
+  }
+`;  
