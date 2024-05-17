@@ -1,25 +1,34 @@
-import { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { REGISTER_USER_MUTATION } from '../graphql';
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { REGISTER_USER_MUTATION } from "../graphql";
+import { useNavigate } from "react-router-dom";
 
 const RegisterUserPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    bio: '',
-    occupation: '',
-    expertise: '',
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    bio: "",
+    occupation: "",
+    expertise: "",
   });
 
-  const [registerUser, { loading, error }] = useMutation(REGISTER_USER_MUTATION);
-
+  const [registerUser, { loading, error }] = useMutation(
+    REGISTER_USER_MUTATION,
+    {
+      onCompleted: (data) => {
+        localStorage.setItem("token", data.registerUser.token);
+        localStorage.setItem("refreshToken", data.registerUser.refreshToken);
+        navigate("/mentors");
+      },
+    }
+  );
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -35,10 +44,10 @@ const RegisterUserPage = () => {
           expertise: formData.expertise,
         },
       });
-      console.log('User registered:', data);
+      console.log("User registered:", data);
       // Redirect to another page, show a success message, etc.
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error("Registration failed:", error);
     }
   };
 
@@ -102,8 +111,12 @@ const RegisterUserPage = () => {
           onChange={handleChange}
           className="border border-gray-300 rounded-md px-4 py-2 w-full"
         />
-        <button type="submit" disabled={loading} className="bg-blue-500 text-white rounded-md px-4 py-2 w-full">
-          {loading ? 'Registering...' : 'Register'}
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-blue-500 text-white rounded-md px-4 py-2 w-full"
+        >
+          {loading ? "Registering..." : "Register"}
         </button>
         {error && <p className="text-red-500">Error: {error.message}</p>}
       </form>

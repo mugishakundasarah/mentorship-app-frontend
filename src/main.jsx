@@ -1,18 +1,38 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
 import "./index.css";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import RegisterUserPage from "./components/RegisterUser.jsx";
+import Mentors from "./pages/Mentors.jsx";
+import ViewRequests from "./pages/ViewRequests.jsx";
+import client from "../ApolloClientSetup.js";
+import LoginUser from "./components/LoginUser.jsx";
 
-const client = new ApolloClient({
-  uri: "http://localhost:8000/graphql/",
-  cache: new InMemoryCache(),
-});
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RegisterUserPage />,
+  },
+  {
+    path: "/mentors",
+    element: <Mentors />,
+  },
+  {
+    path: "/requests",
+    element: <ViewRequests />,
+  },
+  {
+    path: "/login",
+    element: <LoginUser />,
+  },
+]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <RouterProvider router={router} />
     </ApolloProvider>
   </React.StrictMode>
 );
